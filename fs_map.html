@@ -22,13 +22,22 @@
             margin-left: 5px;
             font-size: 14px;
         }
+
+
     </style>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SLZA3imFgbUOtquvTeGjSeuehZ1IgTWa"></script>
     <script type="text/javascript" src="https://unpkg.com/inmap@2.0.2/dist/inmap.min.js"></script>
-    <title></title>
+    <title>佛山战疫 | 消失吧，小红点！</title>
 </head>
 <body>
+    <div style="position: relative;float: left;">
+        <img src="top.png" style="width: 211px;height: 83px">
+        <p>佛山确诊病例曾逗留过的小区、场所</p>
+        <p>实时动态地图</p>
+    </div>
+    <div style="overflow: hidden;"><img src="footer2.png" style="width: 211px;height: 83px"></div>
     <div id="allmap"></div>
+    
 </body>
  
 </html>
@@ -40,6 +49,7 @@ var data = [
     {"count":10,"geometry":{"type":"Point","coordinates":["113.116799","23.054884"], "name":"祖庙街道旭辉公元"}},
     {"count":10,"geometry":{"type":"Point","coordinates":["113.089854","23.039258"], "name":"张槎街道保利香槟花园"}},
     {"count":10,"geometry":{"type":"Point","coordinates":["113.156957","22.99964"], "name":"石湾镇街道依云上城"}},
+    {"count":10,"geometry":{"type":"Point","coordinates":["113.115133","23.019905"], "name":"祖庙街道同华西二路"}},
     //南海
     {"count":10,"geometry":{"type":"Point","coordinates":["113.177678","23.105279"], "name":"大沥镇盐步隔海市场"}},
     {"count":10,"geometry":{"type":"Point","coordinates":["113.144011","23.072356"], "name":"桂城街道景裕豪园"}},
@@ -104,7 +114,6 @@ var inmap = new inMap.Map({
         //精简风格(googlelite)
         //红色警戒风格(redalert)
 
-    bmap.setMapStyle(mapStyle)
     madeBoundary()
 
     //区域图
