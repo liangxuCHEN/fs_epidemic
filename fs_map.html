@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+ 
+        #allmap {
+            width: 100%;
+            height: 100%;
+        }
+ 
+        p {
+            margin-left: 5px;
+            font-size: 14px;
+        }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SLZA3imFgbUOtquvTeGjSeuehZ1IgTWa"></script>
+    <script type="text/javascript" src="https://unpkg.com/inmap@2.0.2/dist/inmap.min.js"></script>
+    <title></title>
+</head>
+<body>
+    <div id="allmap"></div>
+</body>
+ 
+</html>
+<script>
+var data = [
+    {"count":10,"geometry":{"type":"Point","coordinates":["113.007312","22.976562"], "name":"南庄镇万科城"}},
+    {"count":10,"geometry":{"type":"Point","coordinates":["113.130669","22.987747"], "name":"石湾镇街道碧桂园城市花园"}},
+    {"count":10,"geometry":{"type":"Point","coordinates":["113.116799","23.054884"], "name":"祖庙街道旭辉公元"}},
+    {"count":10,"geometry":{"type":"Point","coordinates":["113.089854","23.039258"], "name":"张槎街道保利香槟花园"}},
+    {"count":10,"geometry":{"type":"Point","coordinates":["113.156957","22.99964"], "name":"石湾镇街道依云上城"}},
+]
+var inmap = new inMap.Map({
+        id: 'allmap',
+        skin: "Blueness",
+        center: [113.124845, 23.013556],
+        zoom: {
+            value: 11,
+            show: true,
+            max: 16,
+            min: 8
+        },
+    });
+    
+    var bmap = inmap.getMap();//返回百度地图实例
+
+    var  mapStyle ={style:'midnight'}
+
+    bmap.setMapStyle(mapStyle)
+    madeBoundary()
+
+    //区域图
+    function madeBoundary() {
+
+        var datas = new Array(
+                "佛山市南海-#665599",
+                "佛山市三水-#559955",
+                "佛山市禅城-#449955",
+                "佛山市高明-#552255",
+                "佛山市顺德-#765255"
+            );
+            var bdary = new BMap.Boundary();
+            for(var i=0;i<datas.length;i++){
+            getBoundary(datas[i],bdary);
+
+            }
+
+    }
+
+    function getBoundary(data,bdary){
+      data = data.split("-");
+        bdary.get(data[0], function(rs){       //获取行政区域
+            var count = rs.boundaries.length; //行政区域的点有多少个
+
+
+              var pointArray = [];
+            for (var i = 0; i < count; i++) {
+                var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 2, strokeColor: "#ff0000",fillOpacity:0.5,fillColor:data[1]}); //建立多边形覆盖物
+
+                bmap.addOverlay(ply);  //添加覆盖物
+
+
+            }
+        })
+    }
+
+    var overlay = new inMap.HeatOverlay({
+        style: {
+            maxValue: 3,
+            radius: 30, // 半径
+            minScope: 0, // 最小区间,小于此区间的不显示
+            maxScope: 1 // 最大区间,大于此区间的不显示
+        },
+
+        data: data
+    });
+    inmap.add(overlay);
+    // var heatData = [];
+    // inmap.getMap().addEventListener('mousemove', function (e) {
+    //     heatData.push({
+    //         geometry: {
+    //             type: 'Point',
+    //             coordinates: [e.point.lng, e.point.lat]
+    //         },
+    //         name: "",
+    //         count: 1//权重
+    //     })
+    //     overlay.setData(heatData);
+    // });
+</script>
