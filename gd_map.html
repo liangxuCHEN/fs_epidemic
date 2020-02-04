@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta name="renderer" content="webkit">
+    <meta name="referrer" content="never">
+    <style type="text/css">
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+        
+        #allmap {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            zoom: 0;
+            z-index: 5;
+        }
+        
+        p {
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        
+        .mainfluid {
+            padding-bottom: 0px ! important;
+            margin-bottom: 0px;
+            margin-top: 0px ! important;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            zoom: 1;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center 0;
+            text-align: left;
+        }
+        
+        .pageimg {
+            width: 50%;
+            display: block;
+        }
+        
+        .pagetitle {
+            position: absolute;
+            top: 0.3rem;
+            z-index: 10;
+            left: 10px;
+        }
+        
+        .pageintro {
+            position: absolute;
+            top: 5rem;
+            z-index: 10;
+            left: 10px;
+        }
+        
+        .pagefoot {
+            position: absolute;
+            bottom: -5px;
+            z-index: 10;
+            width: 180px;
+            height: auto;
+            border-radius: 15px;
+            background: #eee;
+            left: -10px;
+            padding: 10px;
+        }
+        
+        .pagefoot img {
+            width: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SLZA3imFgbUOtquvTeGjSeuehZ1IgTWa"></script>
+    <script type="text/javascript" src="https://unpkg.com/inmap@2.0.2/dist/inmap.min.js"></script>
+    <script src="http://img.foshanplus.com/js/jquery.js"></script>
+    <title>广东省疫情地区</title>
+</head>
+
+<body>
+
+    <div class="mainfluid">
+        <div class="pagetitle">
+            <img src="maintitle.png" class="pageimg" />
+        </div>
+<!--         <div class="pageintro">
+            <img src="groupinfs.png" class="pageimg" />
+            <img src="mapintro.png" class="pageimg" />
+        </div> -->
+
+        <div id="allmap"></div>
+
+        <div class="pagefoot"><img src="footer2.png"></div>
+    </div>
+
+
+</body>
+
+</html>
+<script>
+$(document).ready(function(){
+    var getDataURL = 'http://server.foshanplus.com/2020wuhan_fs_visited?city=g'
+    $.ajax({
+        url: getDataURL,
+        useDefaultXhrHeader: false, //important, otherwise its not working
+        type: "GET",
+        //dataType: "json",
+        success: function(response, opts) {
+            
+            var inmap = new inMap.Map({
+                id: 'allmap',
+                skin: "Blueness",
+                center: [113.060845, 23.013556],
+                zoom: {
+                    value: 11,
+                    show: true,
+                    max: 16,
+                    min: 8
+                },
+            });
+
+            var bmap = inmap.getMap(); //返回百度地图实例
+
+            var mapStyle = {
+                style: 'normal'
+            }
+
+            bmap.setMapStyle(mapStyle)
+                //模板
+                //默认地图样式(normal)
+                //清新蓝风格(light)
+                //黑夜风格(dark)
+                //清新蓝绿风格(bluish)
+                //高端灰风格(grayscale)
+                //强边界风格(hardedge)
+                //青春绿风格(darkgreen)
+                //浪漫粉风格(pink)
+                //午夜蓝风格(midnight)
+                //自然绿风格(grassgreen)
+                //精简风格(googlelite)
+                //红色警戒风格(redalert)
+
+            madeBoundary()
+
+            //区域图
+            function madeBoundary() {
+
+                var datas = new Array(
+                    "佛山市南海-#665599",
+                    "佛山市三水-#559955",
+                    "佛山市禅城-#449955",
+                    "佛山市高明-#552255",
+                    "佛山市顺德-#765255"
+                );
+                var bdary = new BMap.Boundary();
+                for (var i = 0; i < datas.length; i++) {
+                    getBoundary(datas[i], bdary);
+
+                }
+
+            }
+
+            function getBoundary(data, bdary) {
+                data = data.split("-");
+                bdary.get(data[0], function(rs) { //获取行政区域
+                    var count = rs.boundaries.length; //行政区域的点有多少个
+
+
+                    var pointArray = [];
+                    for (var i = 0; i < count; i++) {
+                        var ply = new BMap.Polygon(rs.boundaries[i], {
+                            strokeWeight: 2,
+                            strokeColor: "#ff0000",
+                            fillOpacity: 0.5,
+                            fillColor: data[1]
+                        }); //建立多边形覆盖物
+
+                        bmap.addOverlay(ply); //添加覆盖物
+
+
+                    }
+                })
+            }
+
+            var overlay = new inMap.HeatOverlay({
+                style: {
+                    maxValue: 3,
+                    radius: 30, // 半径
+                    minScope: 0, // 最小区间,小于此区间的不显示
+                    maxScope: 1 // 最大区间,大于此区间的不显示
+                },
+
+                data: response['data']['positions']
+            });
+            inmap.add(overlay);
+                    
+        }
+    })
+})
+   
+    // var heatData = [];
+    // inmap.getMap().addEventListener('mousemove', function (e) {
+    //     heatData.push({
+    //         geometry: {
+    //             type: 'Point',
+    //             coordinates: [e.point.lng, e.point.lat]
+    //         },
+    //         name: "",
+    //         count: 1//权重
+    //     })
+    //     overlay.setData(heatData);
+    // });
+</script>
