@@ -1,9 +1,13 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta name="renderer" content="webkit">
+    <meta name="referrer" content="never">
     <style type="text/css">
         body,
         html {
@@ -12,78 +16,346 @@
             margin: 0;
             font-family: "微软雅黑";
         }
- 
+        
         #allmap {
+            position: relative;
             width: 100%;
             height: 100%;
+            zoom: 0;
+            z-index: 5;
         }
- 
+        
         p {
             margin-left: 5px;
             font-size: 14px;
         }
-
-
+        
+        .mainfluid {
+            padding-bottom: 0px ! important;
+            margin-bottom: 0px;
+            margin-top: 0px ! important;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            zoom: 1;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center 0;
+            text-align: left;
+        }
+        
+        .pageimg {
+            width: 50%;
+            display: block;
+        }
+        
+        .pagetitle {
+            position: absolute;
+            top: 0.3rem;
+            z-index: 10;
+            left: 10px;
+        }
+        
+        .pageintro {
+            position: absolute;
+            top: 5rem;
+            z-index: 10;
+            left: 10px;
+        }
+        
+        .pagefoot {
+            position: absolute;
+            bottom: -5px;
+            z-index: 10;
+            width: 180px;
+            height: auto;
+            border-radius: 15px;
+            background: #eee;
+            left: -10px;
+            padding: 10px;
+        }
+        
+        .pagefoot img {
+            width: 100%;
+        }
     </style>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SLZA3imFgbUOtquvTeGjSeuehZ1IgTWa"></script>
     <script type="text/javascript" src="https://unpkg.com/inmap@2.0.2/dist/inmap.min.js"></script>
     <title>佛山战疫 | 消失吧，小红点！</title>
 </head>
+
 <body>
-    <div style="position: relative;float: left;">
-        <img src="top.png" style="width: 211px;height: 83px">
-        <p>佛山确诊病例曾逗留过的小区、场所</p>
-        <p>实时动态地图</p>
+
+    <div class="mainfluid">
+        <div class="pagetitle">
+            <img src="maintitle.png" class="pageimg" />
+        </div>
+        <div class="pageintro">
+            <img src="groupinfs.png" class="pageimg" />
+            <img src="mapintro.png" class="pageimg" />
+        </div>
+
+        <div id="allmap"></div>
+
+        <div class="pagefoot"><img src="footer2.png"></div>
     </div>
-    <div style="overflow: hidden;"><img src="footer2.png" style="width: 211px;height: 83px"></div>
-    <div id="allmap"></div>
-    
+
+
 </body>
- 
+
 </html>
 <script>
-var data = [
-    //禅城
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.007312","22.976562"], "name":"南庄镇万科城"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.130669","22.987747"], "name":"石湾镇街道碧桂园城市花园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.116799","23.054884"], "name":"祖庙街道旭辉公元"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.089854","23.039258"], "name":"张槎街道保利香槟花园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.156957","22.99964"], "name":"石湾镇街道依云上城"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.115133","23.019905"], "name":"祖庙街道同华西二路"}},
-    //南海
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.177678","23.105279"], "name":"大沥镇盐步隔海市场"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.144011","23.072356"], "name":"桂城街道景裕豪园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.149705","23.070376"], "name":"桂城街道中海千灯湖1号"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.167871","23.202247"], "name":"里水镇维也纳酒店"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.185796","23.06422"], "name":"桂城街道夏南二大街"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.153316","23.017175"], "name":"桂城街道怡翠玫瑰园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.201218","23.118598"], "name":"大沥镇维京酒店"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["112.985011","22.973743"], "name":"西樵镇三胜颐景园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.211637","23.198227"], "name":"里水镇金沙洲恒大御景半岛"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.162343","23.053421"], "name":"桂城街道保利叶公馆"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.190193","23.158298"], "name":"大沥镇黄岐万科四季花城"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["112.892562","22.881846"], "name":"西樵镇西岸社区碧桂园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.05734","23.080141"], "name":"狮山镇罗村力迅城筑"}},
-    //顺德区
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.275942","22.760524"], "name":"容桂街道龙光尚街大厦"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.087578","22.955789"], "name":"乐从镇保利拉菲"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.224666","22.925968"], "name":"北滘镇深业城"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.114151","22.952392"], "name":"乐从镇御庭沣酒店 "}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.28439","22.754643"], "name":"容桂街道晖胜尚轩"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.276739","22.949808"], "name":"北滘镇碧桂西苑听涛居"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.212447","22.943827"], "name":"北滘镇美的悦公馆"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.320888","22.752391"], "name":"顺德区容桂街道扁滘柏悦湾"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.036279","22.853901"], "name":"顺德区龙江镇龙山南湖雅园"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.260347","22.827504"], "name":"顺德区大良街道汇城华庭"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.28439","22.754643"], "name":"顺德区容桂街道海尾晖胜尚轩"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["113.275942","22.760524"], "name":"顺德区容桂街道龙光尚街大厦"}},
-    //三水区
-    {"count":10,"geometry":{"type":"Point","coordinates":["112.889638","23.18862"], "name":"云东海街道林海尚都"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["112.91548","23.175826"], "name":"云东海街道雅湖半岛"}},
-    {"count":10,"geometry":{"type":"Point","coordinates":["112.882272","23.1648"], "name":"西南街道博雅滨江"}},
+    var data = [
+        //禅城
+        {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.007312", "22.976562"],
+                "name": "南庄镇万科城"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.130669", "22.987747"],
+                "name": "石湾镇街道碧桂园城市花园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.116799", "23.054884"],
+                "name": "祖庙街道旭辉公元"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.089854", "23.039258"],
+                "name": "张槎街道保利香槟花园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.156957", "22.99964"],
+                "name": "石湾镇街道依云上城"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.115133", "23.019905"],
+                "name": "祖庙街道同华西二路"
+            }
+        },
+        //南海
+        {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.177678", "23.105279"],
+                "name": "大沥镇盐步隔海市场"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.144011", "23.072356"],
+                "name": "桂城街道景裕豪园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.149705", "23.070376"],
+                "name": "桂城街道中海千灯湖1号"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.167871", "23.202247"],
+                "name": "里水镇维也纳酒店"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.185796", "23.06422"],
+                "name": "桂城街道夏南二大街"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.153316", "23.017175"],
+                "name": "桂城街道怡翠玫瑰园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.201218", "23.118598"],
+                "name": "大沥镇维京酒店"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["112.985011", "22.973743"],
+                "name": "西樵镇三胜颐景园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.211637", "23.198227"],
+                "name": "里水镇金沙洲恒大御景半岛"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.162343", "23.053421"],
+                "name": "桂城街道保利叶公馆"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.190193", "23.158298"],
+                "name": "大沥镇黄岐万科四季花城"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["112.892562", "22.881846"],
+                "name": "西樵镇西岸社区碧桂园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.05734", "23.080141"],
+                "name": "狮山镇罗村力迅城筑"
+            }
+        },
+        //顺德区
+        {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.275942", "22.760524"],
+                "name": "容桂街道龙光尚街大厦"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.087578", "22.955789"],
+                "name": "乐从镇保利拉菲"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.224666", "22.925968"],
+                "name": "北滘镇深业城"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.114151", "22.952392"],
+                "name": "乐从镇御庭沣酒店 "
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.28439", "22.754643"],
+                "name": "容桂街道晖胜尚轩"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.276739", "22.949808"],
+                "name": "北滘镇碧桂西苑听涛居"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.212447", "22.943827"],
+                "name": "北滘镇美的悦公馆"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.320888", "22.752391"],
+                "name": "顺德区容桂街道扁滘柏悦湾"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.036279", "22.853901"],
+                "name": "顺德区龙江镇龙山南湖雅园"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.260347", "22.827504"],
+                "name": "顺德区大良街道汇城华庭"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.28439", "22.754643"],
+                "name": "顺德区容桂街道海尾晖胜尚轩"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["113.275942", "22.760524"],
+                "name": "顺德区容桂街道龙光尚街大厦"
+            }
+        },
+        //三水区
+        {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["112.889638", "23.18862"],
+                "name": "云东海街道林海尚都"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["112.91548", "23.175826"],
+                "name": "云东海街道雅湖半岛"
+            }
+        }, {
+            "count": 10,
+            "geometry": {
+                "type": "Point",
+                "coordinates": ["112.882272", "23.1648"],
+                "name": "西南街道博雅滨江"
+            }
+        },
 
-]
-var inmap = new inMap.Map({
+    ]
+    var inmap = new inMap.Map({
         id: 'allmap',
         skin: "Blueness",
         center: [113.060845, 23.013556],
@@ -94,13 +366,15 @@ var inmap = new inMap.Map({
             min: 8
         },
     });
-    
-    var bmap = inmap.getMap();//返回百度地图实例
 
-    var  mapStyle ={style:'normal'}
+    var bmap = inmap.getMap(); //返回百度地图实例
+
+    var mapStyle = {
+        style: 'normal'
+    }
 
     bmap.setMapStyle(mapStyle)
-    //模板
+        //模板
         //默认地图样式(normal)
         //清新蓝风格(light)
         //黑夜风格(dark)
@@ -120,31 +394,36 @@ var inmap = new inMap.Map({
     function madeBoundary() {
 
         var datas = new Array(
-                "佛山市南海-#665599",
-                "佛山市三水-#559955",
-                "佛山市禅城-#449955",
-                "佛山市高明-#552255",
-                "佛山市顺德-#765255"
-            );
-            var bdary = new BMap.Boundary();
-            for(var i=0;i<datas.length;i++){
-            getBoundary(datas[i],bdary);
+            "佛山市南海-#665599",
+            "佛山市三水-#559955",
+            "佛山市禅城-#449955",
+            "佛山市高明-#552255",
+            "佛山市顺德-#765255"
+        );
+        var bdary = new BMap.Boundary();
+        for (var i = 0; i < datas.length; i++) {
+            getBoundary(datas[i], bdary);
 
-            }
+        }
 
     }
 
-    function getBoundary(data,bdary){
-      data = data.split("-");
-        bdary.get(data[0], function(rs){       //获取行政区域
+    function getBoundary(data, bdary) {
+        data = data.split("-");
+        bdary.get(data[0], function(rs) { //获取行政区域
             var count = rs.boundaries.length; //行政区域的点有多少个
 
 
-              var pointArray = [];
+            var pointArray = [];
             for (var i = 0; i < count; i++) {
-                var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 2, strokeColor: "#ff0000",fillOpacity:0.5,fillColor:data[1]}); //建立多边形覆盖物
+                var ply = new BMap.Polygon(rs.boundaries[i], {
+                    strokeWeight: 2,
+                    strokeColor: "#ff0000",
+                    fillOpacity: 0.5,
+                    fillColor: data[1]
+                }); //建立多边形覆盖物
 
-                bmap.addOverlay(ply);  //添加覆盖物
+                bmap.addOverlay(ply); //添加覆盖物
 
 
             }
